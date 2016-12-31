@@ -39,20 +39,18 @@
 #include "log.h"
 #include "util.h"
 
-static void import_kernel_nv(char *name, int for_emulator)
+#include "init_msm8974.h"
+
+static void import_kernel_nv(const std::string& key,
+        const std::string& value, bool for_emulator __attribute__((unused)))
 {
-    char *value = strchr(name, '=');
-    int name_len = strlen(name);
+    if (key.empty()) return;
 
-    if (value == 0) return;
-    *value++ = 0;
-    if (name_len == 0) return;
-
-    if (!strcmp(name,"oppo.rf_version")) {
-        property_set("ro.oppo.rf_version", value);
-    } else if (!strcmp(name,"oppo.pcb_version")) {
-        property_set("ro.oppo.pcb_version", value);
-        if (!strcmp(value, "20") ||
+    if (key == "oppo.rf_version") {
+        property_set("ro.oppo.rf_version", value.c_str());
+    } else if (key == "oppo.pcb_version") {
+        property_set("ro.oppo.pcb_version", value.c_str());
+    if (!strcmp(value, "20") ||
                 !strcmp(value, "21") ||
                 !strcmp(value, "22") ||
                 !strcmp(value, "23")) {
@@ -84,7 +82,8 @@ static void set_oppo_layout()
     }
 }
 
-void init_msm_properties(unsigned long msm_id, unsigned long msm_ver, char *board_type)
+
+void init_target_properties()
 {
     import_kernel_cmdline(0, import_kernel_nv);
     set_oppo_layout();

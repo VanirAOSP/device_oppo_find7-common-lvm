@@ -32,15 +32,12 @@ on fs
     restorecon /dev/mapper/lvpool-userdata
 
     mount_all ./fstab.qcom
+
     restorecon_recursive /persist
 
 on init
     # Support legacy paths
-    symlink /sdcard /mnt/sdcard
     symlink /sdcard /storage/sdcard0
-
-    # By default, primary storage is physical
-    #setprop ro.vold.primary_physical 1
 
 on boot
     # For find7s notification LED
@@ -56,8 +53,3 @@ on boot
     chown system system /sys/class/leds/led:rgb_blue/ramp_step_ms
     chown system system /sys/class/leds/led:rgb_blue/duty_pcts
     chown system system /sys/class/leds/led:rgb_blue/blink
-
-on post-fs-data
-    # Torch
-    chown system camera /sys/devices/qcom,camera-led-flash.81/test
-    chmod 0660 /sys/devices/qcom,camera-led-flash.81/test
